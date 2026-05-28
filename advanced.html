@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Advanced Tools</title>
+<link rel="stylesheet" href="advanced.css">
+</head>
+<body>
+<div class="app">
+
+  <div class="theme-toggle">
+    <button onclick="window.location.href='index.html'">← Kembali</button>
+    <button onclick="toggleTheme()" id="themeBtn">🌙 Dark Mode</button>
+  </div>
+
+  <h1>⚙️ Advanced Tools</h1>
+
+  <!-- Tab Navigation -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('search')">🔍 Search</button>
+    <button class="tab-btn" onclick="switchTab('image')">🎨 Generate Gambar</button>
+    <button class="tab-btn" onclick="switchTab('game')">🎮 Tic Tac Toe</button>
+    <button class="tab-btn" onclick="switchTab('hadist')">📖 Hadist & Dalil</button>
+  </div>
+
+  <!-- Tab 1: Search -->
+  <div id="tab-search" class="tab-content active">
+    <h2>🔍 Cari di Catatan & To-Do</h2>
+    <div id="searchBox">
+      <input type="text" id="searchInput" placeholder="Ketik kata kunci..." onkeyup="doSearch()">
+      <div id="searchResults" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Generate Gambar -->
+  <div id="tab-image" class="tab-content">
+    <h2>🎨 Generate Gambar</h2>
+    <p style="color:var(--text-secondary); text-align:center; margin-top:-10px;">
+      Ketik prompt, gambar langsung jadi di bawah
+    </p>
+    <div id="imageGen">
+      <input type="text" id="imagePrompt" placeholder="Contoh: kucing lucu pakai kacamata, cyberpunk city">
+      <select id="imageOrientation">
+        <option value="square">Square 1:1</option>
+        <option value="landscape">Landscape 16:9</option>
+        <option value="vertical">Vertical 9:16</option>
+      </select>
+      <button onclick="generateImage()">Generate</button>
+      <div id="imageResult"></div>
+    </div>
+  </div>
+
+  <!-- Tab 3: Game -->
+  <div id="tab-game" class="tab-content">
+    <h2>🎮 Game: Tic Tac Toe</h2>
+    <p style="color:var(--text-secondary); text-align:center; margin-top:-10px;">
+      Main X vs O. Klik kotak buat jalan
+    </p>
+    <div id="tictactoe">
+      <div id="ttt-status">Giliran: X</div>
+      <div id="ttt-board">
+        <button class="ttt-cell" data-index="0"></button>
+        <button class="ttt-cell" data-index="1"></button>
+        <button class="ttt-cell" data-index="2"></button>
+        <button class="ttt-cell" data-index="3"></button>
+        <button class="ttt-cell" data-index="4"></button>
+        <button class="ttt-cell" data-index="5"></button>
+        <button class="ttt-cell" data-index="6"></button>
+        <button class="ttt-cell" data-index="7"></button>
+        <button class="ttt-cell" data-index="8"></button>
+      </div>
+      <button onclick="resetTTT()" class="reset-btn">Reset Game</button>
+    </div>
+  </div>
+
+  <!-- Tab 4: Hadist & Dalil -->
+  <div id="tab-hadist" class="tab-content">
+    <h2>📖 100 Hadist & 100 Dalil</h2>
+    <input type="text" id="hadistSearch" placeholder="Cari hadist/dalil..." onkeyup="filterHadist()">
+    <div class="hadist-tabs">
+      <button class="hadist-tab-btn active" onclick="switchHadistTab('hadist')">Hadist</button>
+      <button class="hadist-tab-btn" onclick="switchHadistTab('dalil')">Dalil Al-Quran</button>
+    </div>
+    <div id="hadistList" class="hadist-list"></div>
+  </div>
+
+</div>
+
+<script src="advanced.js"></script>
+</body>
+</html>

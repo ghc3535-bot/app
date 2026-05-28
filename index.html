@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Kalkulator Lengkap</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <div class="theme-toggle">
+    <button onclick="toggleTheme()" id="themeBtn">🌙 Dark Mode</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('kalkulator')">Kalkulator</button>
+    <button class="tab" onclick="switchTab('statistikDasar')">Stat Dasar</button>
+    <button class="tab" onclick="switchTab('statistikLanjut')">Data Persentil</button>
+    <button class="tab" onclick="switchTab('diagram')">Diagram</button>
+
+    <div class="tab-separator"></div>
+
+    <button class="tab" onclick="switchTab('suhu')">Suhu</button>
+    <button class="tab" onclick="switchTab('uang')">Uang</button>
+    <button class="tab" onclick="switchTab('todo')">To-Do</button>
+    <button class="tab" onclick="switchTab('catatan')">Catatan</button>
+    <button class="tab" onclick="switchTab('stopwatch')">Stopwatch</button>
+    <button class="tab" onclick="switchTab('search')">Cari</button>
+    <a href="advanced.html" class="tab" style="text-decoration:none; display:flex; align-items:center; justify-content:center;">
+  🔍 Advanced
+</a>
+  </div>
+
+  <!-- KALKULATOR -->
+  <div id="kalkulator" class="tab-content active">
+    <input type="text" id="angka1" placeholder="Angka pertama">
+    <select id="operator">
+      <option value="+">+</option>
+      <option value="-">-</option>
+      <option value="*">×</option>
+      <option value="/">÷</option>
+      <option value="**">Pangkat</option>
+      <option value="sqrt">Akar</option>
+      <option value="lingkaran">Lingkaran</option>
+      <option value="kubus">Kubus</option>
+    </select>
+    <input type="text" id="angka2" placeholder="Angka kedua">
+    <button onclick="hitung()">Hitung</button>
+    <div id="hasil" class="hasil" style="display:none;"></div>
+    <button onclick="tampilHistory()">Lihat History</button>
+    <button onclick="clearHistory()">Hapus History</button>
+    <div id="history" class="hasil" style="display:none;"></div>
+  </div>
+
+  <!-- STATISTIK DASAR -->
+  <div id="statistikDasar" class="tab-content">
+    <input type="text" id="dataDasar" placeholder="Data: 1,2,3,4,5">
+    <input type="text" id="labelDasar" placeholder="Label opsional: A,B,C,D,E">
+    <button onclick="hitungStatistikDasar()">Hitung</button>
+    <div id="hasilStatistikDasar" class="hasil" style="display:none;"></div>
+  </div>
+
+  <!-- STATISTIK LANJUT -->
+  <div id="statistikLanjut" class="tab-content">
+    <input type="text" id="dataStatistik" placeholder="Data: 1,2,3,4,5,6,7,8">
+    <input type="text" id="persentilInput" placeholder="Persentil opsional: 10,90">
+    <button onclick="hitungStatistikLanjut()">Hitung</button>
+    <div id="hasilStatistikLanjut" class="hasil" style="display:none;"></div>
+<div id="langkahStatistik" class="hasil" style="display:none; margin-top:15px;"></div>
+  </div>
+
+  <!-- DIAGRAM -->
+  <div id="diagram" class="tab-content">
+    <input type="text" id="judulDiagram" placeholder="Judul Diagram">
+    <input type="text" id="labelData" placeholder="Label: Apel,Jeruk,Mangga">
+    <input type="text" id="nilaiData" placeholder="Nilai: 10,15,8">
+    <select id="tipeDiagram">
+      <option value="bar">Bar Chart</option>
+      <option value="pie">Pie Chart</option>
+    </select>
+    <select id="paletWarna">
+      <option value="catppuccin">Catppuccin</option>
+      <option value="pastel">Pastel</option>
+      <option value="neon">Neon</option>
+      <option value="monokrom">Monokrom</option>
+    </select>
+    <select id="bgDiagram">
+      <option value="gelap">Background Gelap</option>
+      <option value="terang">Background Terang</option>
+    </select>
+    <button onclick="gambarDiagram()">Gambar Diagram</button>
+    <div id="chartContainer">
+      <canvas id="canvasDiagram" width="380" height="220"></canvas>
+    </div>
+    <button onclick="exportPNG()">Export PNG</button>
+    <button onclick="exportJPG()">Export JPG</button>
+  </div>
+
+  <!-- SUHU -->
+  <div id="suhu" class="tab-content">
+    <input type="text" id="suhuInput" placeholder="Masukkan suhu">
+    <select id="suhuFrom">
+      <option value="C">Celcius</option>
+      <option value="F">Fahrenheit</option>
+      <option value="K">Kelvin</option>
+    </select>
+    <select id="suhuTo">
+      <option value="F">Fahrenheit</option>
+      <option value="C">Celcius</option>
+      <option value="K">Kelvin</option>
+    </select>
+    <button onclick="konversiSuhu()">Konversi</button>
+    <div id="hasilSuhu" class="hasil" style="display:none;"></div>
+  </div>
+
+  <!-- UANG -->
+  <div id="uang" class="tab-content">
+    <input type="text" id="uangInput" placeholder="Jumlah uang">
+    <select id="uangFrom">
+      <option value="IDR">IDR</option>
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+      <option value="JPY">JPY</option>
+      <option value="SGD">SGD</option>
+    </select>
+    <select id="uangTo">
+      <option value="USD">USD</option>
+      <option value="IDR">IDR</option>
+      <option value="EUR">EUR</option>
+      <option value="JPY">JPY</option>
+      <option value="SGD">SGD</option>
+    </select>
+    <button onclick="konversiUang()">Konversi</button>
+    <div id="hasilUang" class="hasil" style="display:none;"></div>
+  </div>
+
+  <!-- TO-DO -->
+  <div id="todo" class="tab-content">
+    <input type="text" id="todoInput" placeholder="Tambah tugas...">
+    <button onclick="addTodo()">Tambah</button>
+    <div id="todoList"></div>
+  </div>
+
+  <!-- CATATAN -->
+  <div id="catatan" class="tab-content">
+    <textarea id="noteArea" rows="8" placeholder="Tulis catatan..."></textarea>
+    <button onclick="clearNote()">Hapus Catatan</button>
+  </div>
+
+  <!-- STOPWATCH -->
+  <div id="stopwatch" class="tab-content">
+    <div class="stopwatch-display" id="stopwatchDisplay">00:00:00.000</div>
+    <div class="stopwatch-controls">
+      <button onclick="startStopwatch()">Mulai</button>
+      <button onclick="pauseStopwatch()">Jeda</button>
+      <button onclick="resetStopwatch()">Reset</button>
+      <button onclick="lapStopwatch()">Lap</button>
+    </div>
+    <div id="lapList"></div>
+  </div>
+
+  <!-- SEARCH -->
+  <div id="search" class="tab-content">
+    <input type="text" id="searchInput" placeholder="Ketik kata kunci..." oninput="doSearch()">
+    <div id="searchResults" class="hasil" style="display:none;"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
