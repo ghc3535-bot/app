@@ -16,6 +16,10 @@
     --hasil-bg: #fcf8ff;
     --shadow: rgba(180, 150, 200, 0.3);
     --border-color: rgba(180, 140, 220, 0.4);
+    --todo-bg: #f0e8ff;
+    --todo-hover: #e8ddff;
+    --todo-delete: #ff6b9d;
+    --todo-delete-hover: #ff4d87;
 }
 
 [data-theme="dark"] {
@@ -32,6 +36,10 @@
     --hasil-bg: rgba(25, 25, 45, 0.9);
     --shadow: rgba(0, 0, 0, 0.6);
     --border-color: rgba(140, 170, 255, 0.5);
+    --todo-bg: rgba(50, 50, 75, 0.6);
+    --todo-hover: rgba(70, 70, 95, 0.8);
+    --todo-delete: #ff7a9e;
+    --todo-delete-hover: #ff5a8a;
 }
 
 body {
@@ -290,6 +298,103 @@ mark {
     line-height: 1.6;
 }
 
+/* TO-DO + CATATAN GABUNG - SUPPORT DATA-THEME */
+#taskList {
+    list-style: none;
+    padding: 0;
+    margin-top: 12px;
+}
+
+#taskList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    margin: 8px 0;
+    background: var(--todo-bg);
+    border-radius: 12px;
+    border: 1px solid var(--input-border);
+    transition: all 0.2s ease;
+}
+
+#taskList li:hover {
+    background: var(--todo-hover);
+    transform: translateX(5px);
+}
+
+#taskList li.done span {
+    text-decoration: line-through;
+    opacity: 0.5;
+}
+
+#taskList li span {
+    cursor: pointer;
+    flex: 1;
+    text-align: left;
+    word-break: break-word;
+    color: var(--text-color);
+}
+
+#taskList li button {
+    background: var(--todo-delete);
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 10px;
+    width: auto;
+    box-shadow: none;
+}
+
+#taskList li button:hover {
+    background: var(--todo-delete-hover);
+    transform: scale(1.05);
+}
+
+#taskInput {
+    width: calc(100% - 90px);
+    display: inline-block;
+    margin-right: 6px;
+}
+
+#catatanTodo button:last-of-type {
+    margin-top: 10px;
+}
+
+#noteArea {
+    width: 100%;
+    margin-top: 12px;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    color: var(--text-color);
+    resize: vertical;
+    font-family: 'Times New Roman', serif;
+    font-weight: 600;
+    min-height: 120px;
+}
+
+#noteArea:focus {
+    outline: none;
+    border-color: var(--accent-1);
+    box-shadow: 0 0 0 3px rgba(212, 165, 255, 0.2);
+}
+
+#catatanTodo hr {
+    margin: 25px 0;
+    border: 0;
+    border-top: 2px solid var(--border-color);
+}
+
+#catatanTodo h4 {
+    margin: 15px 0 10px 0;
+    color: var(--accent-1);
+    font-size: 18px;
+}
+
 @media (max-width: 600px) {
     .tab {
         flex: 1 1 45%;
@@ -297,8 +402,37 @@ mark {
     .stopwatch-display {
         font-size: 36px;
     }
+    #taskInput {
+        width: 100%;
+        margin-right: 0;
+    }
 }
+
 #langkahStatistik h4 {
     margin-top: 0;
     color: var(--accent-1);
 }
+/* CHECKBOX TO-DO */
+#taskList li input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    cursor: pointer;
+    accent-color: var(--accent-1);
+    flex-shrink: 0;
+}
+
+#taskList li.done span {
+    text-decoration: line-through;
+    opacity: 0.5;
+    color: var(--text-secondary);
+}
+
+#taskList li span {
+    cursor: pointer;
+    flex: 1;
+    text-align: left;
+    word-break: break-word;
+    color: var(--text-color);
+    user-select: none;
+    }
