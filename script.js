@@ -557,7 +557,7 @@ function lapStopwatch() {
 
 // UANG
 function konversiUang() {
-    const rates = { IDR: 1, USD: 0.000062, EUR: 0.000057, JPY: 0.0091, SGD: 0.000083 };
+    const rates = { IDR: 1, USD: 0.00005608, EUR: 0.000057, JPY: 0.0091, SGD: 0.000083 };
     let val = parseNumber(document.getElementById("uangInput").value.trim());
     let from = document.getElementById("uangFrom").value;
     let to = document.getElementById("uangTo").value;
