@@ -1,5 +1,4 @@
 let historyList = JSON.parse(localStorage.getItem('calcHistory')) || [];
-let todos = JSON.parse(localStorage.getItem('todos')) || [];
 let timerInterval = null;
 let seconds = 0;
 let running = false;
@@ -9,26 +8,41 @@ let stopwatchInterval = null;
 let stopwatchTime = 0;
 let isRunning = false;
 
+// TO-DO + CATATAN GABUNG - hapus 'todos' lama biar gak bentrok
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
 document.addEventListener("DOMContentLoaded", () => {
+    // THEME
     const savedTheme = localStorage.getItem('theme');
     const btn = document.getElementById('themeBtn');
     if (savedTheme === 'dark') {
         document.body.setAttribute('data-theme', 'dark');
-        btn.innerText = '☀️ Light Mode';
+        if(btn) btn.innerText = '☀️ Light Mode';
     }
 
-    document.getElementById("operator").addEventListener("change", toggleAngka2);
-    toggleAngka2();
-    renderTodos();
+    // INIT
+    const operator = document.getElementById("operator");
+    if(operator) {
+        operator.addEventListener("change", toggleAngka2);
+        toggleAngka2();
+    }
+
+    showTasks();
     loadNote();
     updateStopwatchDisplay();
 });
 
-function switchTab(tabName) {
+function switchTab(tabName, event) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(tabName).classList.add('active');
-    event.target.classList.add('active');
+    if(event) event.target.classList.add('active');
+
+    // Refresh pas buka tab gabungan
+    if(tabName === 'catatanTodo') {
+        showTasks();
+        loadNote();
+    }
 }
 
 function toggleAngka2() {
@@ -77,13 +91,13 @@ function parseFraction(frac) {
 // DIAGRAM
 function gambarDiagram() {
     const labels = document.getElementById("labelData").value
-  .split(',')
-  .map(s => s.trim())
-  .filter(s => s!== "");
+ .split(',')
+ .map(s => s.trim())
+ .filter(s => s!== "");
     const values = document.getElementById("nilaiData").value
-  .split(',')
-  .map(s => parseFloat(s.trim()))
-  .filter(x =>!isNaN(x));
+ .split(',')
+ .map(s => parseFloat(s.trim()))
+ .filter(x =>!isNaN(x));
 
     if (labels.length!== values.length) {
         alert("Jumlah label dan nilai harus sama!");
@@ -261,7 +275,7 @@ function hitungStatistikDasar() {
     const total = values.reduce((a, b) => a + b, 0);
     const mean = total / values.length;
     const median = sorted.length % 2 === 0
-   ? (sorted[sorted.length/2 - 1] + sorted[sorted.length/2]) / 2
+  ? (sorted[sorted.length/2 - 1] + sorted[sorted.length/2]) / 2
       : sorted[Math.floor(sorted.length/2)];
 
     const freq = {};
@@ -321,7 +335,6 @@ function hitungStatistikLanjut() {
     const batasAtas = q3 + 1.5 * iqr;
     const outlier = sorted.filter(x => x < batasBawah || x > batasAtas);
 
-    // Hasil singkat
     hasil.innerHTML = `
         <b>Hasil:</b><br>
         Q1: ${q1.toFixed(2)}<br>
@@ -333,7 +346,6 @@ function hitungStatistikLanjut() {
     hasil.style.display = "block";
     hasil.classList.remove("error");
 
-    // Langkah penyelesaian
     let langkah = `<h4>📝 Langkah Penyelesaian:</h4>`;
     langkah += `<b>1. Data terurut:</b> ${sorted.join(", ")}<br><br>`;
     langkah += `<b>2. Q1, Q2, Q3:</b><br>`;
@@ -410,7 +422,6 @@ function hitung() {
 
     hasil.innerText = display;
 
-    // FIX: hapus "let" biar update variable global
     historyList = JSON.parse(localStorage.getItem('calcHistory')) || [];
     historyList.push(display);
     if (historyList.length > 50) historyList.shift();
@@ -433,44 +444,67 @@ function clearHistory() {
     document.getElementById("history").innerHTML = "<div>History dihapus</div>";
 }
 
-// TO-DO
-function addTodo() {
-    let input = document.getElementById("todoInput");
-    let text = input.value.trim();
-    if (!text) return;
-    todos.push({text, done: false});
+// TO-DO + CATATAN GABUNG
+function addTask() {
+  let input = document.getElementById('taskInput');
+  if(!input) return;
+  let text = input.value.trim();
+  if(text!== "") {
+    tasks.push({text: text, done: false});
     input.value = "";
-    saveTodos();
-    renderTodos();
+    saveTasks();
+    showTasks();
+  }
 }
 
-function renderTodos() {
-    let list = document.getElementById("todoList");
-    list.innerHTML = todos.map((t, i) => `
-        <div class="list-item">
-            <span style="text-decoration:${t.done? 'line-through' : 'none'}">${t.text}</span>
-            <div>
-                <button onclick="toggleTodo(${i})">${t.done? 'Undo' : 'Done'}</button>
-                <button onclick="deleteTodo(${i})">Hapus</button>
-            </div>
-        </div>
-    `).join("");
+function showTasks() {
+  let list = document.getElementById('taskList');
+  if(!list) return;
+  list.innerHTML = "";
+  tasks.forEach((task, i) => {
+    list.innerHTML += `
+      <li class="${task.done? 'done' : ''}">
+        <input type="checkbox" ${task.done? 'checked' : ''} onchange="toggleTask(${i})">
+        <span onclick="toggleTask(${i})">${task.text}</span>
+        <button onclick="deleteTask(${i})">x</button>
+      </li>
+    `;
+  });
 }
 
-function toggleTodo(i) {
-    todos[i].done =!todos[i].done;
-    saveTodos();
-    renderTodos();
+function toggleTask(i) {
+  tasks[i].done =!tasks[i].done;
+  saveTasks();
+  showTasks();
 }
 
-function deleteTodo(i) {
-    todos.splice(i, 1);
-    saveTodos();
-    renderTodos();
+function deleteTask(i) {
+  tasks.splice(i, 1);
+  saveTasks();
+  showTasks();
 }
 
-function saveTodos() {
-    localStorage.setItem('todos', JSON.stringify(todos));
+function saveTasks() {
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+// CATATAN PANJANG
+function loadNote() {
+    const noteArea = document.getElementById('noteArea');
+    if(noteArea) {
+        noteArea.value = localStorage.getItem('note') || '';
+        noteArea.oninput = () => {
+            localStorage.setItem('note', noteArea.value);
+        };
+    }
+}
+
+function clearNote() {
+    const noteArea = document.getElementById('noteArea');
+    if(noteArea && confirm('Hapus semua catatan?')) {
+        noteArea.value = '';
+        localStorage.removeItem('note');
+    }
 }
 
 // SUHU
@@ -493,25 +527,6 @@ function konversiSuhu() {
     hasil.classList.remove("error");
 }
 
-// CATATAN
-function loadNote() {
-    document.getElementById("noteArea").value = localStorage.getItem('note') || "";
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    const noteArea = document.getElementById("noteArea");
-    if (noteArea) {
-        noteArea.addEventListener("input", () => {
-            localStorage.setItem('note', noteArea.value);
-        });
-    }
-});
-
-function clearNote() {
-    document.getElementById("noteArea").value = "";
-    localStorage.removeItem('note');
-}
-
 // STOPWATCH
 function updateStopwatchDisplay() {
     const ms = stopwatchTime % 1000;
@@ -521,7 +536,8 @@ function updateStopwatchDisplay() {
     const mm = String(minutes).padStart(2, '0');
     const ss = String(seconds).padStart(2, '0');
     const mss = String(ms).padStart(3, '0');
-    document.getElementById('stopwatchDisplay').textContent = `${mm}:${ss}.${mss}`;
+    const display = document.getElementById('stopwatchDisplay');
+    if(display) display.textContent = `${mm}:${ss}.${mss}`;
 }
 
 function startStopwatch() {
@@ -543,7 +559,8 @@ function resetStopwatch() {
     pauseStopwatch();
     stopwatchTime = 0;
     updateStopwatchDisplay();
-    document.getElementById('lapList').innerHTML = '';
+    const lapList = document.getElementById('lapList');
+    if(lapList) lapList.innerHTML = '';
 }
 
 function lapStopwatch() {
@@ -552,7 +569,8 @@ function lapStopwatch() {
     const lapItem = document.createElement('div');
     lapItem.className = 'list-item';
     lapItem.textContent = `Lap: ${lapTime}`;
-    document.getElementById('lapList').prepend(lapItem);
+    const lapList = document.getElementById('lapList');
+    if(lapList) lapList.prepend(lapItem);
 }
 
 // UANG
@@ -620,14 +638,13 @@ function doSearch() {
 
     let results = [];
     const note = localStorage.getItem('note') || "";
-    const todos = JSON.parse(localStorage.getItem('todos')) || [];
     const calcHistory = JSON.parse(localStorage.getItem('calcHistory')) || [];
 
     if (note.toLowerCase().includes(query)) {
         results.push(`📝 <b>Catatan:</b>\n${highlightText(note, query)}`);
     }
 
-    todos.forEach((t, i) => {
+    tasks.forEach((t, i) => {
         if (t.text.toLowerCase().includes(query)) {
             results.push(`✅ <b>To-Do ${i+1}:</b> ${highlightText(t.text, query)} ${t.done? '[Selesai]' : ''}`);
         }
@@ -650,4 +667,4 @@ function doSearch() {
 function highlightText(text, query) {
     const regex = new RegExp(`(${query})`, "gi");
     return text.replace(regex, "<mark>$1</mark>");
-}
+                }
