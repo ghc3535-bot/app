@@ -12,22 +12,21 @@
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('kalkulator')">Kalkulator</button>
-    <button class="tab" onclick="switchTab('statistikDasar')">Stat Dasar</button>
-    <button class="tab" onclick="switchTab('statistikLanjut')">Data Persentil</button>
-    <button class="tab" onclick="switchTab('diagram')">Diagram</button>
+    <button class="tab active" onclick="switchTab('kalkulator', event)">Kalkulator</button>
+    <button class="tab" onclick="switchTab('statistikDasar', event)">Stat Dasar</button>
+    <button class="tab" onclick="switchTab('statistikLanjut', event)">Data Persentil</button>
+    <button class="tab" onclick="switchTab('diagram', event)">Diagram</button>
 
     <div class="tab-separator"></div>
 
-    <button class="tab" onclick="switchTab('suhu')">Suhu</button>
-    <button class="tab" onclick="switchTab('uang')">Uang</button>
-    <button class="tab" onclick="switchTab('todo')">To-Do</button>
-    <button class="tab" onclick="switchTab('catatan')">Catatan</button>
-    <button class="tab" onclick="switchTab('stopwatch')">Stopwatch</button>
-    <button class="tab" onclick="switchTab('search')">Cari</button>
+    <button class="tab" onclick="switchTab('suhu', event)">Suhu</button>
+    <button class="tab" onclick="switchTab('uang', event)">Uang</button>
+    <button class="tab" onclick="switchTab('catatanTodo', event)">Catatan/To-Do</button>
+    <button class="tab" onclick="switchTab('stopwatch', event)">Stopwatch</button>
+    <button class="tab" onclick="switchTab('search', event)">Cari</button>
     <a href="advanced.html" class="tab" style="text-decoration:none; display:flex; align-items:center; justify-content:center;">
-  🔍 Advanced
-</a>
+      🔍 Advanced
+    </a>
   </div>
 
   <!-- KALKULATOR -->
@@ -65,7 +64,7 @@
     <input type="text" id="persentilInput" placeholder="Persentil opsional: 10,90">
     <button onclick="hitungStatistikLanjut()">Hitung</button>
     <div id="hasilStatistikLanjut" class="hasil" style="display:none;"></div>
-<div id="langkahStatistik" class="hasil" style="display:none; margin-top:15px;"></div>
+    <div id="langkahStatistik" class="hasil" style="display:none; margin-top:15px;"></div>
   </div>
 
   <!-- DIAGRAM -->
@@ -133,16 +132,16 @@
     <div id="hasilUang" class="hasil" style="display:none;"></div>
   </div>
 
-  <!-- TO-DO -->
-  <div id="todo" class="tab-content">
-    <input type="text" id="todoInput" placeholder="Tambah tugas...">
-    <button onclick="addTodo()">Tambah</button>
-    <div id="todoList"></div>
-  </div>
+  <!-- CATATAN + TO-DO GABUNG -->
+  <div id="catatanTodo" class="tab-content">
+    <input type="text" id="taskInput" placeholder="Tambah tugas/catatan...">
+    <button onclick="addTask()">Tambah</button>
+    <ul id="taskList"></ul>
 
-  <!-- CATATAN -->
-  <div id="catatan" class="tab-content">
-    <textarea id="noteArea" rows="8" placeholder="Tulis catatan..."></textarea>
+    <hr style="margin:20px 0; border:0; border-top:1px solid #333;">
+
+    <h4>📝 Catatan Panjang</h4>
+    <textarea id="noteArea" rows="6" placeholder="Tulis catatan panjang di sini..."></textarea>
     <button onclick="clearNote()">Hapus Catatan</button>
   </div>
 
