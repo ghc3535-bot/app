@@ -1,8 +1,4 @@
 let historyList = JSON.parse(localStorage.getItem('calcHistory')) || [];
-let timerInterval = null;
-let seconds = 0;
-let running = false;
-
 // Stopwatch variables
 let stopwatchInterval = null;
 let stopwatchTime = 0;
@@ -56,27 +52,32 @@ function toggleAngka2() {
     }
 }
 
+const unicodeFractions = {
+    '½': 0.5, '¼': 0.25, '¾': 0.75,
+    '⅓': 1/3, '⅔': 2/3,
+    '⅕': 0.2, '⅖': 0.4, '⅗': 0.6, '⅘': 0.8,
+    '⅙': 1/6, '⅚': 5/6,
+    '⅛': 0.125, '⅜': 0.375, '⅝': 0.625, '⅞': 0.875,
+    '⅑': 1/9, '⅒': 0.1
+};
+
 function parseNumber(val) {
     if (!val) return NaN;
     val = val.trim();
     if (val.includes(' ')) {
-        const parts = val.split(' ');
+        const parts = val.split(/\s+/);
         const whole = parseFloat(parts[0]);
-        const frac = parseFraction(parts[1]);
+        const frac = parts[1] in unicodeFractions ? unicodeFractions[parts[1]] : parseFraction(parts[1]);
         return whole + frac;
     }
-    if (val.includes('/')) {
-        return parseFraction(val);
-    }
-    const unicodeFractions = {
-        '½': 0.5, '¼': 0.25, '¾': 0.75,
-        '⅓': 0.3333, '⅔': 0.6666,
-        '⅕': 0.2, '⅖': 0.4, '⅗': 0.6, '⅘': 0.8,
-        '⅙': 0.1666, '⅚': 0.8333,
-        '⅛': 0.125, '⅜': 0.375, '⅝': 0.625, '⅞': 0.875
-    };
-    if (unicodeFractions[val]) return unicodeFractions[val];
+    if (val.includes('/')) return parseFraction(val);
+    if (unicodeFractions[val] !== undefined) return unicodeFractions[val];
     return parseFloat(val.replace(',', '.'));
+}
+
+// buang noise floating point (0.1+0.2 -> 0.3)
+function rapikan(n) {
+    return Number.isFinite(n) ? parseFloat(n.toPrecision(12)) : n;
 }
 
 function parseFraction(frac) {
@@ -99,6 +100,10 @@ function gambarDiagram() {
  .map(s => parseFloat(s.trim()))
  .filter(x =>!isNaN(x));
 
+    if (values.length === 0) {
+        alert("Isi label dan nilai dulu!");
+        return;
+    }
     if (labels.length!== values.length) {
         alert("Jumlah label dan nilai harus sama!");
         return;
@@ -148,9 +153,16 @@ function getColors(palet, n) {
         catppuccin: ["#89b4fa", "#a6e3a1", "#f9e2af", "#f38ba8", "#cba6f7", "#74c7ec"],
         pastel: ["#FF6B6B", "#4ECDC4", "#FFE66D", "#95E1D3", "#A18CD1", "#FBC4AB"],
         neon: ["#00FF87", "#00D4FF", "#FF00FF", "#FFFF00", "#FF6B00", "#FF007F"],
-        monokrom: ["#333", "#555", "#777", "#999", "#BBB", "#DDD"]
+        monokrom: ["#333", "#555", "#777", "#999", "#BBB", "#DDD"],
+
+        // === PALET NYENTRIK BARU ===
+        cyberpunk: ["#00f5ff", "#ff00ff", "#ff1493", "#00ff88", "#ffff00", "#ff4500"],
+        toxico: ["#39ff14", "#7fff00", "#adff2f", "#32cd32", "#00fa9a", "#98fb98"],
+        sunset: ["#ff3c41", "#ff7e67", "#ffb347", "#ffdb58", "#ff9966", "#ff5f6d"],
+        galaxy: ["#8a2be2", "#4b0082", "#9400d3", "#ff1493", "#00bfff", "#1e90ff"],
+        candy: ["#ff69b4", "#ff1493", "#ffc0cb", "#ff00ff", "#ffb6c1", "#ff91af"]
     };
-    let arr = palets[palet];
+    let arr = palets[palet] || palets.catppuccin;
     return Array.from({length: n}, (_, i) => arr[i % arr.length]);
 }
 
@@ -270,6 +282,12 @@ function hitungStatistikDasar() {
     }
 
     const values = dataInput.split(',').map(s => parseNumber(s.trim())).filter(x =>!isNaN(x));
+    if (values.length === 0) {
+        hasil.innerText = "Data tidak valid! Pakai angka dipisah koma, contoh: 1,2,3";
+        hasil.classList.add("error");
+        hasil.style.display = "block";
+        return;
+    }
     const labels = labelInput? labelInput.split(',').map(s => s.trim()) : [];
     const sorted = [...values].sort((a, b) => a - b);
     const total = values.reduce((a, b) => a + b, 0);
@@ -325,6 +343,13 @@ function hitungStatistikLanjut() {
     }
 
     const values = dataInput.split(',').map(s => parseFloat(s.trim())).filter(x =>!isNaN(x));
+    if (values.length === 0) {
+        hasil.innerText = "Data tidak valid! Pakai angka dipisah koma, contoh: 1,2,3";
+        hasil.classList.add("error");
+        hasil.style.display = "block";
+        langkahDiv.style.display = "none";
+        return;
+    }
     const sorted = [...values].sort((a, b) => a - b);
     const n = sorted.length;
     const q1 = persentil(sorted, 25);
@@ -398,16 +423,16 @@ function hitung() {
 
     let result, display;
     switch (operator) {
-        case "+": result = angka1 + angka2; display = `${angka1} + ${angka2} = ${result}`; break;
-        case "-": result = angka1 - angka2; display = `${angka1} - ${angka2} = ${result}`; break;
-        case "*": result = angka1 * angka2; display = `${angka1} × ${angka2} = ${result}`; break;
+        case "+": result = rapikan(angka1 + angka2); display = `${angka1} + ${angka2} = ${result}`; break;
+        case "-": result = rapikan(angka1 - angka2); display = `${angka1} - ${angka2} = ${result}`; break;
+        case "*": result = rapikan(angka1 * angka2); display = `${angka1} × ${angka2} = ${result}`; break;
         case "/":
             if (angka2 === 0) { hasil.innerText = "Tidak bisa bagi 0!"; hasil.classList.add("error"); return; }
-            result = angka1 / angka2; display = `${angka1} ÷ ${angka2} = ${result}`; break;
-        case "**": result = Math.pow(angka1, angka2); display = `${angka1}^${angka2} = ${result}`; break;
+            result = rapikan(angka1 / angka2); display = `${angka1} ÷ ${angka2} = ${result}`; break;
+        case "**": result = rapikan(Math.pow(angka1, angka2)); display = `${angka1}^${angka2} = ${result}`; break;
         case "sqrt":
             if (angka1 < 0) { hasil.innerText = "Tidak bisa akar bilangan negatif!"; hasil.classList.add("error"); return; }
-            result = Math.sqrt(angka1); display = `√${angka1} = ${result}`; break;
+            result = rapikan(Math.sqrt(angka1)); display = `√${angka1} = ${result}`; break;
         case "lingkaran":
             let luas = Math.PI * angka1 * angka1;
             let keliling = 2 * Math.PI * angka1;
@@ -435,7 +460,7 @@ function tampilHistory() {
         historyDiv.innerHTML = "<div>Tidak ada history</div>";
         return;
     }
-    historyDiv.innerHTML = historyList.map(h => `<div class="list-item">${h}</div>`).join("");
+    historyDiv.innerHTML = historyList.map(h => `<div class="list-item">${escapeHTML(h)}</div>`).join("");
 }
 
 function clearHistory() {
@@ -465,7 +490,7 @@ function showTasks() {
     list.innerHTML += `
       <li class="${task.done? 'done' : ''}">
         <input type="checkbox" ${task.done? 'checked' : ''} onchange="toggleTask(${i})">
-        <span onclick="toggleTask(${i})">${task.text}</span>
+        <span onclick="toggleTask(${i})">${escapeHTML(task.text)}</span>
         <button onclick="deleteTask(${i})">x</button>
       </li>
     `;
@@ -532,12 +557,13 @@ function updateStopwatchDisplay() {
     const ms = stopwatchTime % 1000;
     const totalSeconds = Math.floor(stopwatchTime / 1000);
     const seconds = totalSeconds % 60;
-    const minutes = Math.floor(totalSeconds / 60);
+    const minutes = Math.floor(totalSeconds / 60) % 60;
+    const hh = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
     const mm = String(minutes).padStart(2, '0');
     const ss = String(seconds).padStart(2, '0');
     const mss = String(ms).padStart(3, '0');
     const display = document.getElementById('stopwatchDisplay');
-    if(display) display.textContent = `${mm}:${ss}.${mss}`;
+    if(display) display.textContent = `${hh}:${mm}:${ss}.${mss}`;
 }
 
 function startStopwatch() {
@@ -575,7 +601,7 @@ function lapStopwatch() {
 
 // UANG
 function konversiUang() {
-    const rates = { IDR: 1, USD: 0.00005608, EUR: 0.000057, JPY: 0.0091, SGD: 0.000083 };
+    const rates = { IDR: 1, USD: 0.00005543, EUR: 0.000057, JPY: 0.0091, SGD: 0.000083 };
     let val = parseNumber(document.getElementById("uangInput").value.trim());
     let from = document.getElementById("uangFrom").value;
     let to = document.getElementById("uangTo").value;
@@ -590,7 +616,7 @@ function konversiUang() {
 
     let inIDR = val / rates[from];
     let result = inIDR * rates[to];
-    hasil.innerText = `${val} ${from} = ${result.toFixed(4)} ${to}`;
+    hasil.innerText = `${val} ${from} = ${result.toFixed(1)} ${to}`;
     hasil.classList.remove("error");
 }
 
@@ -657,14 +683,19 @@ function doSearch() {
     });
 
     if (results.length === 0) {
-        resultsDiv.innerHTML = `Gak ketemu hasil untuk "<b>${query}</b>"`;
+        resultsDiv.innerHTML = `Gak ketemu hasil untuk "<b>${escapeHTML(query)}</b>"`;
     } else {
         resultsDiv.innerHTML = `<b>Ditemukan ${results.length} hasil:</b>\n\n` + results.join("\n\n");
     }
     resultsDiv.style.display = "block";
 }
 
+function escapeHTML(str) {
+    return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 function highlightText(text, query) {
-    const regex = new RegExp(`(${query})`, "gi");
-    return text.replace(regex, "<mark>$1</mark>");
-                }
+    const safe = escapeHTML(text);
+    const q = escapeHTML(query).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return safe.replace(new RegExp(`(${q})`, "gi"), "<mark>$1</mark>");
+}

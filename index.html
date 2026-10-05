@@ -2,12 +2,16 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Kalkulator Lengkap</title>
+<title>Multi Tool</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app">
   <div class="theme-toggle">
+    <div class="left-btns">
+      <button onclick="window.location.href='advanced.html'">⚙️ Advanced</button>
+    </div>
+    <div class="tab-separator"></div>
     <button onclick="toggleTheme()" id="themeBtn">🌙 Dark Mode</button>
   </div>
 
@@ -17,16 +21,12 @@
     <button class="tab" onclick="switchTab('statistikLanjut', event)">Data Persentil</button>
     <button class="tab" onclick="switchTab('diagram', event)">Diagram</button>
 
-    <div class="tab-separator"></div>
 
     <button class="tab" onclick="switchTab('suhu', event)">Suhu</button>
     <button class="tab" onclick="switchTab('uang', event)">Uang</button>
     <button class="tab" onclick="switchTab('catatanTodo', event)">Catatan/To-Do</button>
     <button class="tab" onclick="switchTab('stopwatch', event)">Stopwatch</button>
-    <button class="tab" onclick="switchTab('search', event)">Cari</button>
-    <a href="advanced.html" class="tab" style="text-decoration:none; display:flex; align-items:center; justify-content:center;">
-      🔍 Advanced
-    </a>
+      <button class="tab game-tab" onclick="window.location.href='catur.html'">♞ Main Catur</button>
   </div>
 
   <!-- KALKULATOR -->
@@ -81,6 +81,11 @@
       <option value="pastel">Pastel</option>
       <option value="neon">Neon</option>
       <option value="monokrom">Monokrom</option>
+      <option value="cyberpunk">Cyberpunk</option>
+      <option value="toxico">Toxico</option>
+      <option value="sunset">Sunset</option>
+      <option value="galaxy">Galaxy</option>
+      <option value="candy">Candy</option>
     </select>
     <select id="bgDiagram">
       <option value="gelap">Background Gelap</option>
@@ -163,7 +168,6 @@
     <div id="searchResults" class="hasil" style="display:none;"></div>
   </div>
 </div>
-
 <script src="script.js"></script>
 </body>
 </html>

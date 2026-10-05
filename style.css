@@ -101,7 +101,7 @@ body {
 
 .tab {
     flex: 1 1 22%;
-    padding: 12px 8px;
+    padding: 12px 5px;
     background: var(--tab-bg);
     border: 1px solid var(--input-border);
     border-radius: 14px;
@@ -435,4 +435,76 @@ mark {
     word-break: break-word;
     color: var(--text-color);
     user-select: none;
-    }
+}
+.theme-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.theme-toggle .left-btns {
+    display: flex;
+    gap: 10px;
+}
+
+.theme-toggle button {
+    width: auto;
+    padding: 8px 16px;
+    font-size: 14px;
+    background: var(--tab-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: none;
+    transition: all 0.2s ease;
+    font-family: 'Times New Roman', serif;
+    font-weight: 600;
+}
+
+.theme-toggle button:hover {
+    background: var(--tab-hover);
+    transform: translateY(-1px);
+    border-color: var(--accent-1);
+}
+/* === MENU GRID + TOMBOL CATUR === */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.menu-btn {
+  display: block;
+  padding: 20px;
+  background: var(--bg-secondary, #fff);
+  color: var(--text-primary, #333);
+  text-decoration: none;
+  border-radius: 12px;
+  border: 2px solid var(--border-color, #ddd);
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.menu-btn:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-color, #4CAF50);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Khusus tombol Catur biar beda warna */
+.menu-btn[href="catur.html"] {
+  background: linear-gradient(135deg, #4CAF50, #66bb6a);
+  color: white;
+  border-color: #4CAF50;
+}
+
+.menu-btn[href="catur.html"]:hover {
+  background: linear-gradient(135deg, #45a049, #5cb85c);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
